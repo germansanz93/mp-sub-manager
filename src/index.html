@@ -19,9 +19,9 @@
         .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .filter-group label { font-weight: bold; }
         .filter-group select, .filter-group input { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px; }
-        .pagination-controls { display: flex; align-items: center; gap: 10px; }
-        #page-info { font-size: 14px; color: #555; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .pagination-controls { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; }
+        .page-info { font-size: 14px; color: #555; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         th, td { border: 1px solid #e0e0e0; padding: 12px 15px; text-align: left; }
         thead th { background-color: #009ee3; color: white; font-weight: bold; }
         tbody tr:nth-child(even) { background-color: #f8f9fa; }
@@ -58,10 +58,10 @@
                     </select>
                     <button id="btn-buscar">Buscar</button>
                 </div>
-                <div id="pagination-controls" class="pagination-controls">
-                    <button id="btn-prev">Anterior</button>
-                    <span id="page-info">Página 1 de 1</span>
-                    <button id="btn-next">Siguiente</button>
+                <div class="pagination-controls">
+                    <button class="btn-prev">Anterior</button>
+                    <span class="page-info">Página 1 de 1</span>
+                    <button class="btn-next">Siguiente</button>
                 </div>
             </div>
             <button id="btn-delete-token" class="button-secondary">Cambiar Token</button>
@@ -70,8 +70,7 @@
                     <thead>
                         <tr>
                             <th>Razón</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
+                            <th>Email del Pagador</th>
                             <th>Monto</th>
                             <th>Estado</th>
                             <th>Próximo Cobro</th>
@@ -81,6 +80,11 @@
                     </tbody>
                 </table>
                 <p id="message-area" class="message hidden"></p>
+            </div>
+            <div class="pagination-controls">
+                <button class="btn-prev">Anterior</button>
+                <span class="page-info">Página 1 de 1</span>
+                <button class="btn-next">Siguiente</button>
             </div>
         </div>
     </div>

@@ -8,14 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnBuscar = document.getElementById('btn-buscar');
   const btnDeleteToken = document.getElementById('btn-delete-token');
   const tableBody = document.getElementById('table-body');
+  const tableContainer = document.getElementById('table-container'); // Elemento al que haremos scroll
   const messageArea = document.getElementById('message-area');
   const statusFilter = document.getElementById('status-filter');
   const emailSearchInput = document.getElementById('email-search-input');
 
-  const paginationControls = document.getElementById('pagination-controls');
-  const btnPrev = document.getElementById('btn-prev');
-  const btnNext = document.getElementById('btn-next');
-  const pageInfo = document.getElementById('page-info');
+  const paginationControls = document.querySelectorAll('.pagination-controls');
+  const prevButtons = document.querySelectorAll('.btn-prev');
+  const nextButtons = document.querySelectorAll('.btn-next');
+  const pageInfoSpans = document.querySelectorAll('.page-info');
 
   let currentPage = 1;
   let totalPages = 1;
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tableBody.innerHTML = '';
       messageArea.textContent = 'Buscando datos en la API de Mercado Pago...';
       messageArea.classList.remove('hidden', 'error');
-      paginationControls.classList.add('hidden');
+      paginationControls.forEach(c => c.classList.add('hidden'));
 
       const offset = (currentPage - 1) * limit;
       const status = statusFilter.value;
@@ -48,18 +49,18 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
       }
 
-      paginationControls.classList.remove('hidden');
+      paginationControls.forEach(c => c.classList.remove('hidden'));
       const totalResults = resultado.paging.total;
       totalPages = Math.ceil(totalResults / limit);
-      pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
-      btnPrev.disabled = currentPage === 1;
-      btnNext.disabled = currentPage === totalPages;
+
+      pageInfoSpans.forEach(span => span.textContent = `Página ${currentPage} de ${totalPages}`);
+      prevButtons.forEach(btn => btn.disabled = currentPage === 1);
+      nextButtons.forEach(btn => btn.disabled = currentPage === totalPages);
 
       resultado.results.forEach(sub => {
           const row = tableBody.insertRow();
           row.insertCell().textContent = sub.reason || 'N/A';
-          row.insertCell().textContent = sub.payer_first_name || 'No disponible';
-          row.insertCell().textContent = sub.payer_last_name || 'No disponible';
+          row.insertCell().textContent = sub.payer_email || 'No disponible';
           const amount = sub.auto_recurring?.transaction_amount || 0;
           const currency = sub.auto_recurring?.currency_id || '';
           row.insertCell().textContent = `${amount.toFixed(2)} ${currency}`;
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
           tokenInput.value = '';
           tableBody.innerHTML = '';
           messageArea.classList.add('hidden');
-          paginationControls.classList.add('hidden');
+          paginationControls.forEach(c => c.classList.add('hidden'));
       }
   };
 
@@ -127,18 +128,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   });
 
-  btnPrev.addEventListener('click', () => {
-      if (currentPage > 1) {
-          currentPage--;
-          fetchAndDisplaySubscriptions();
-      }
+  prevButtons.forEach(btn => {
+      btn.addEventListener('click', async () => { // <--- Cambio a async
+          if (currentPage > 1) {
+              currentPage--;
+              await fetchAndDisplaySubscriptions(); // <--- Se espera a que termine
+              tableContainer.scrollIntoView({ behavior: 'smooth' }); // <--- ¡AQUÍ ESTÁ LA MAGIA!
+          }
+      });
   });
 
-  btnNext.addEventListener('click', () => {
-      if (currentPage < totalPages) {
-          currentPage++;
-          fetchAndDisplaySubscriptions();
-      }
+  nextButtons.forEach(btn => {
+      btn.addEventListener('click', async () => { // <--- Cambio a async
+          if (currentPage < totalPages) {
+              currentPage++;
+              await fetchAndDisplaySubscriptions(); // <--- Se espera a que termine
+              tableContainer.scrollIntoView({ behavior: 'smooth' }); // <--- ¡AQUÍ ESTÁ LA MAGIA!
+          }
+      });
   });
 
   inicializarApp();
