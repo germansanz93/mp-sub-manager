@@ -16,9 +16,12 @@
         .button-update { background-color: #f39c12; font-size: 12px; padding: 5px 10px; }
         .button-update:hover { background-color: #e67e22; }
         .button-small { font-size: 12px; padding: 5px 10px; }
+        .button-bulk { background-color: #e74c3c; font-size: 14px; padding: 8px 16px; }
+        .button-bulk:hover { background-color: #c0392b; }
         .hidden { display: none; }
         .error { color: #ff4d4d; }
         .success { color: #28a745; }
+        .warning { color: #f39c12; }
         .filters-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 20px; }
         .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .filter-group label { font-weight: bold; }
@@ -77,6 +80,75 @@
             border: 1px solid #f5c6cb; 
             color: #721c24; 
         }
+        
+        /* Estilos para la actualización en bulk */
+        .bulk-update-section {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        .bulk-update-section.show { display: block; }
+        .bulk-update-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .bulk-update-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #856404;
+        }
+        .bulk-update-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #856404;
+        }
+        .bulk-update-form {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .bulk-update-form input {
+            width: 150px;
+            margin: 0;
+        }
+        .bulk-update-summary {
+            background-color: #e8f5e8;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .bulk-update-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .bulk-update-preview {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .bulk-update-preview table {
+            margin: 0;
+            box-shadow: none;
+        }
+        .bulk-update-preview th {
+            position: sticky;
+            top: 0;
+            background-color: #009ee3;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +163,50 @@
 
         <div id="main-view" class="hidden">
             <h1>Visor de Suscripciones (Mercado Pago)</h1>
+            
+            <!-- Sección de actualización en bulk -->
+            <div id="bulk-update-section" class="bulk-update-section">
+                <div class="bulk-update-header">
+                    <div class="bulk-update-title">🔄 Actualización en Lote</div>
+                    <button id="bulk-update-close" class="bulk-update-close">×</button>
+                </div>
+                
+                <div class="bulk-update-form">
+                    <label><strong>Nuevo monto para todas las suscripciones filtradas:</strong></label>
+                    <input type="number" id="bulk-new-amount" placeholder="Ej: 1500.50" step="0.01" min="0">
+                    <button id="btn-preview-bulk-update" class="button-secondary">Vista Previa</button>
+                </div>
+                
+                <div id="bulk-update-summary" class="bulk-update-summary hidden">
+                    <h4>📊 Resumen de la Actualización</h4>
+                    <p><strong>Total de suscripciones a actualizar:</strong> <span id="bulk-total-count">0</span></p>
+                    <p><strong>Monto actual promedio:</strong> <span id="bulk-current-avg">$0.00</span></p>
+                    <p><strong>Nuevo monto:</strong> <span id="bulk-new-amount-display">$0.00</span></p>
+                    
+                    <div id="bulk-update-preview" class="bulk-update-preview hidden">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Razón</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Monto Actual</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulk-preview-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="bulk-update-actions">
+                        <button id="btn-export-csv" class="button-secondary">📊 Exportar CSV</button>
+                        <button id="btn-confirm-bulk-update" class="button-bulk">✅ Confirmar Actualización</button>
+                        <button id="btn-cancel-bulk-update" class="button-secondary">❌ Cancelar</button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="filters-container">
                 <div class="filter-group">
                     <input type="text" id="email-search-input" placeholder="Buscar por email...">
@@ -103,6 +219,7 @@
                         <option value="cancelled">Canceladas</option>
                     </select>
                     <button id="btn-buscar">Buscar</button>
+                    <button id="btn-bulk-update" class="button-bulk">🔄 Actualización en Lote</button>
                 </div>
                 <div class="pagination-controls">
                     <button class="btn-prev">Anterior</button>

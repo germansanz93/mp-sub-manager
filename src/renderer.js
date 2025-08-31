@@ -19,9 +19,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextButtons = document.querySelectorAll('.btn-next');
   const pageInfoSpans = document.querySelectorAll('.page-info');
 
+  // Elementos de actualización en bulk
+  const bulkUpdateSection = document.getElementById('bulk-update-section');
+  const btnBulkUpdate = document.getElementById('btn-bulk-update');
+  const bulkUpdateClose = document.getElementById('bulk-update-close');
+  const bulkNewAmount = document.getElementById('bulk-new-amount');
+  const btnPreviewBulkUpdate = document.getElementById('btn-preview-bulk-update');
+  const bulkUpdateSummary = document.getElementById('bulk-update-summary');
+  const bulkTotalCount = document.getElementById('bulk-total-count');
+  const bulkCurrentAvg = document.getElementById('bulk-current-avg');
+  const bulkNewAmountDisplay = document.getElementById('bulk-new-amount-display');
+  const bulkUpdatePreview = document.getElementById('bulk-update-preview');
+  const bulkPreviewTableBody = document.getElementById('bulk-preview-table-body');
+  const btnConfirmBulkUpdate = document.getElementById('btn-confirm-bulk-update');
+  const btnCancelBulkUpdate = document.getElementById('btn-cancel-bulk-update');
+
   let currentPage = 1;
   let totalPages = 1;
   const limit = 20;
+
+  // Variables para bulk update
+  let allFilteredSubscriptions = [];
+  let isBulkUpdateMode = false;
 
   // Función para crear el formulario de actualización
   const createUpdateForm = (subscriptionId, reason, currentAmount) => {
@@ -94,6 +113,204 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       resultElement.className = 'update-result error';
     }
+  };
+
+  // Función para obtener todas las suscripciones filtradas (sin paginación)
+  const getAllFilteredSubscriptions = async () => {
+    const status = statusFilter.value;
+    const email = emailSearchInput.value.trim();
+    const amount = amountSearchInput.value.trim();
+    
+    let allSubscriptions = [];
+    let offset = 0;
+    let hasMore = true;
+    
+    messageArea.textContent = 'Consultando todas las suscripciones filtradas...';
+    messageArea.classList.remove('hidden', 'error');
+    
+    try {
+      while (hasMore) {
+        const resultado = await window.electronAPI.buscarSuscripciones({ 
+          status, 
+          limit: 100, // Usar límite más alto para reducir llamadas
+          offset, 
+          email, 
+          amount 
+        });
+        
+        if (resultado.error) {
+          throw new Error(resultado.message);
+        }
+        
+        if (!resultado.results || resultado.results.length === 0) {
+          hasMore = false;
+          break;
+        }
+        
+        allSubscriptions = allSubscriptions.concat(resultado.results);
+        offset += resultado.results.length;
+        
+        // Si recibimos menos del límite, no hay más páginas
+        if (resultado.results.length < 100) {
+          hasMore = false;
+        }
+      }
+      
+      messageArea.classList.add('hidden');
+      return allSubscriptions;
+      
+    } catch (error) {
+      messageArea.textContent = `Error al consultar suscripciones: ${error.message}`;
+      messageArea.classList.add('error');
+      messageArea.classList.remove('hidden');
+      return [];
+    }
+  };
+
+  // Función para mostrar vista previa de actualización en bulk
+  const showBulkUpdatePreview = async () => {
+    const newAmount = parseFloat(bulkNewAmount.value);
+    
+    if (!newAmount || newAmount <= 0) {
+      alert('Por favor, ingresa un monto válido mayor a 0.');
+      return;
+    }
+
+    // Obtener todas las suscripciones filtradas
+    const subscriptions = await getAllFilteredSubscriptions();
+    
+    if (subscriptions.length === 0) {
+      alert('No se encontraron suscripciones con los filtros aplicados.');
+      return;
+    }
+
+    allFilteredSubscriptions = subscriptions;
+    
+    // Calcular estadísticas
+    const totalCount = subscriptions.length;
+    const currentAmounts = subscriptions.map(sub => sub.auto_recurring?.transaction_amount || 0);
+    const currentAvg = currentAmounts.reduce((sum, amount) => sum + amount, 0) / totalCount;
+    
+    // Mostrar resumen
+    bulkTotalCount.textContent = totalCount;
+    bulkCurrentAvg.textContent = `$${currentAvg.toFixed(2)}`;
+    bulkNewAmountDisplay.textContent = `$${newAmount.toFixed(2)}`;
+    
+    // Generar vista previa de la tabla
+    bulkPreviewTableBody.innerHTML = '';
+    subscriptions.forEach(sub => {
+      const row = bulkPreviewTableBody.insertRow();
+      row.insertCell().textContent = sub.reason || 'N/A';
+      row.insertCell().textContent = sub.payer_first_name || 'No disponible';
+      row.insertCell().textContent = sub.payer_last_name || 'No disponible';
+      const currentAmount = sub.auto_recurring?.transaction_amount || 0;
+      row.insertCell().textContent = `$${currentAmount.toFixed(2)}`;
+      const statusCell = row.insertCell();
+      statusCell.textContent = sub.status;
+      statusCell.className = `status status-${sub.status}`;
+    });
+    
+    // Mostrar secciones
+    bulkUpdateSummary.classList.remove('hidden');
+    bulkUpdatePreview.classList.remove('hidden');
+  };
+
+  // Función para exportar a CSV
+  const exportToCSV = () => {
+    if (allFilteredSubscriptions.length === 0) {
+      alert('No hay suscripciones para exportar.');
+      return;
+    }
+
+    const newAmount = parseFloat(bulkNewAmount.value);
+    if (!newAmount || newAmount <= 0) {
+      alert('Por favor, ingresa un monto válido mayor a 0.');
+      return;
+    }
+
+    // Crear contenido del CSV
+    const headers = [
+      'ID',
+      'Razón',
+      'Nombre',
+      'Apellido',
+      'Email',
+      'Monto Actual',
+      'Moneda',
+      'Estado',
+      'Próximo Cobro',
+      'Nuevo Monto'
+    ];
+
+    const csvContent = [
+      headers.join(','),
+      ...allFilteredSubscriptions.map(sub => [
+        sub.id,
+        `"${sub.reason || 'N/A'}"`,
+        `"${sub.payer_first_name || 'No disponible'}"`,
+        `"${sub.payer_last_name || 'No disponible'}"`,
+        `"${sub.payer_email || 'No disponible'}"`,
+        sub.auto_recurring?.transaction_amount || 0,
+        sub.auto_recurring?.currency_id || 'ARS',
+        sub.status,
+        sub.next_payment_date ? new Date(sub.next_payment_date).toLocaleDateString() : 'Finalizado',
+        newAmount
+      ].join(','))
+    ].join('\n');
+
+    // Crear y descargar el archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `suscripciones_bulk_update_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Función para confirmar actualización en bulk
+  const confirmBulkUpdate = () => {
+    const newAmount = parseFloat(bulkNewAmount.value);
+    
+    if (!newAmount || newAmount <= 0) {
+      alert('Por favor, ingresa un monto válido mayor a 0.');
+      return;
+    }
+
+    if (allFilteredSubscriptions.length === 0) {
+      alert('No hay suscripciones para actualizar.');
+      return;
+    }
+
+    // Por ahora solo simulación
+    alert(`Simulación: Se actualizarían ${allFilteredSubscriptions.length} suscripciones al monto $${newAmount.toFixed(2)}`);
+    
+    // Aquí iría la lógica real de actualización
+    console.log('Suscripciones a actualizar:', allFilteredSubscriptions);
+    console.log('Nuevo monto:', newAmount);
+    
+    // Cerrar la sección de bulk update
+    hideBulkUpdateSection();
+  };
+
+  // Función para mostrar/ocultar sección de bulk update
+  const showBulkUpdateSection = () => {
+    bulkUpdateSection.classList.add('show');
+    isBulkUpdateMode = true;
+    bulkNewAmount.focus();
+  };
+
+  const hideBulkUpdateSection = () => {
+    bulkUpdateSection.classList.remove('show');
+    bulkUpdateSummary.classList.add('hidden');
+    bulkUpdatePreview.classList.add('hidden');
+    bulkNewAmount.value = '';
+    allFilteredSubscriptions = [];
+    isBulkUpdateMode = false;
   };
 
   const fetchAndDisplaySubscriptions = async () => {
@@ -193,6 +410,16 @@ document.addEventListener('DOMContentLoaded', () => {
           mostrarVistaPrincipal(false);
       }
   };
+
+  // Event listeners para bulk update
+  btnBulkUpdate.addEventListener('click', showBulkUpdateSection);
+  bulkUpdateClose.addEventListener('click', hideBulkUpdateSection);
+  btnPreviewBulkUpdate.addEventListener('click', showBulkUpdatePreview);
+  btnConfirmBulkUpdate.addEventListener('click', confirmBulkUpdate);
+  btnCancelBulkUpdate.addEventListener('click', hideBulkUpdateSection);
+  
+  // Agregar event listener para exportar CSV
+  document.getElementById('btn-export-csv').addEventListener('click', exportToCSV);
 
   btnSaveToken.addEventListener('click', async () => {
       const token = tokenInput.value;
