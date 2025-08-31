@@ -1,0 +1,201 @@
+name: 🏗️ Build y Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versión a construir (ej: 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            target: AppImage
+          - arch: x64
+            target: deb
+          - arch: x64
+            target: rpm
+    
+    steps:
+      - name: 🚀 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 🔧 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build for Linux
+        run: |
+          npm run build:linux
+          
+      - name: 📦 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.target }}-${{ matrix.arch }}
+          path: dist/
+          retention-days: 30
+
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+          - arch: ia32
+    
+    steps:
+      - name: 🚀 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 🔧 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build for Windows
+        run: |
+          npm run build:win
+          
+      - name: 📦 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.arch }}
+          path: dist/
+          retention-days: 30
+
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+          - arch: arm64
+    
+    steps:
+      - name: 🚀 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 🔧 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build for macOS
+        run: |
+          npm run build:mac
+          
+      - name: 📦 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: dist/
+          retention-days: 30
+
+  create-release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: 🚀 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+          
+      - name: 🏷️ Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            🎉 **Meli Sub Manager ${{ github.ref_name }}**
+            
+            ## 📥 Descargas
+            
+            ### Windows
+            - **Instalador x64**: `Meli Sub Manager Setup ${{ github.ref_name }}.exe`
+            - **Portable x64**: `Meli Sub Manager.exe`
+            
+            ### macOS
+            - **DMG x64**: `Meli Sub Manager-${{ github.ref_name }}.dmg`
+            - **DMG ARM64**: `Meli Sub Manager-${{ github.ref_name }}-arm64.dmg`
+            
+            ### Linux
+            - **AppImage**: `Meli Sub Manager-${{ github.ref_name }}.AppImage`
+            - **DEB**: `meli-sub-manager_${{ github.ref_name }}_amd64.deb`
+            - **RPM**: `meli-sub-manager-${{ github.ref_name }}.x86_64.rpm`
+            
+            ## 🔄 Cambios en esta versión
+            
+            - Actualizaciones de seguridad
+            - Mejoras en la interfaz de usuario
+            - Corrección de bugs
+            
+            ## 📋 Instrucciones de instalación
+            
+            1. Descarga el archivo correspondiente a tu sistema operativo
+            2. Ejecuta el instalador o archivo descargado
+            3. Configura tu Access Token de Mercado Pago
+            4. ¡Disfruta gestionando tus suscripciones!
+            
+            ---
+            
+            ⭐ **Si te gusta este proyecto, ¡dale una estrella en GitHub!**
+          draft: false
+          prerelease: false
+          files: dist/**/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-manual:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: 🚀 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 🔧 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build for all platforms
+        run: |
+          npm run build:linux
+          
+      - name: 📦 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-build-${{ github.event.inputs.version }}
+          path: dist/
+          retention-days: 30
