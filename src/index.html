@@ -13,8 +13,12 @@
         input[type="password"], input[type="text"], input[type="number"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
         .button-secondary { background-color: #7f8c8d; }
         .button-secondary:hover { background-color: #95a5a6; }
+        .button-update { background-color: #f39c12; font-size: 12px; padding: 5px 10px; }
+        .button-update:hover { background-color: #e67e22; }
+        .button-small { font-size: 12px; padding: 5px 10px; }
         .hidden { display: none; }
         .error { color: #ff4d4d; }
+        .success { color: #28a745; }
         .filters-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 20px; }
         .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .filter-group label { font-weight: bold; }
@@ -32,6 +36,47 @@
         .status-pending { color: #fd7e14; }
         .status-cancelled { color: #dc3545; }
         .message { margin-top: 20px; text-align: center; color: #6c757d; }
+        
+        /* Estilos para el formulario inline de actualización */
+        .update-form { 
+            background-color: #f8f9fa; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            display: none; 
+        }
+        .update-form.show { display: block; }
+        .update-form-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+        }
+        .update-form input { 
+            width: 150px; 
+            margin: 0; 
+        }
+        .update-form-buttons { 
+            display: flex; 
+            gap: 10px; 
+        }
+        .update-result { 
+            margin-top: 10px; 
+            padding: 8px; 
+            border-radius: 4px; 
+            font-size: 14px; 
+        }
+        .update-result.success { 
+            background-color: #d4edda; 
+            border: 1px solid #c3e6cb; 
+            color: #155724; 
+        }
+        .update-result.error { 
+            background-color: #f8d7da; 
+            border: 1px solid #f5c6cb; 
+            color: #721c24; 
+        }
     </style>
 </head>
 <body>
@@ -71,10 +116,12 @@
                     <thead>
                         <tr>
                             <th>Razón</th>
-                            <th>Email del Pagador</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
                             <th>Monto</th>
                             <th>Estado</th>
                             <th>Próximo Cobro</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">

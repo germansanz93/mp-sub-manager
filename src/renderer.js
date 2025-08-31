@@ -23,6 +23,79 @@ document.addEventListener('DOMContentLoaded', () => {
   let totalPages = 1;
   const limit = 20;
 
+  // Función para crear el formulario de actualización
+  const createUpdateForm = (subscriptionId, reason, currentAmount) => {
+    console.log('Creando formulario para:', subscriptionId, reason, currentAmount); // Debug
+    
+    const formDiv = document.createElement('div');
+    formDiv.className = 'update-form';
+    formDiv.style.display = 'block'; // Forzar que sea visible
+    formDiv.style.border = '2px solid red'; // Debug visual
+    
+    formDiv.innerHTML = `
+      <div class="update-form-row">
+        <label><strong>Actualizar monto para: ${reason}</strong></label>
+        <input type="number" 
+               class="new-amount-input" 
+               placeholder="Nuevo monto" 
+               step="0.01" 
+               min="0" 
+               value="${currentAmount}">
+        <div class="update-form-buttons">
+          <button class="btn-save-update button-small">Guardar</button>
+          <button class="btn-cancel-update button-secondary button-small">Cancelar</button>
+        </div>
+      </div>
+      <div class="update-result" style="display: none;"></div>
+    `;
+
+    // Event listeners para el formulario
+    const saveBtn = formDiv.querySelector('.btn-save-update');
+    const cancelBtn = formDiv.querySelector('.btn-cancel-update');
+    const amountInput = formDiv.querySelector('.new-amount-input');
+    const resultDiv = formDiv.querySelector('.update-result');
+
+    saveBtn.addEventListener('click', () => {
+      const newAmount = parseFloat(amountInput.value);
+      
+      if (!newAmount || newAmount <= 0) {
+        showUpdateResult(resultDiv, 'Por favor, ingresa un monto válido mayor a 0.', false);
+        return;
+      }
+
+      if (newAmount === currentAmount) {
+        showUpdateResult(resultDiv, 'El nuevo monto debe ser diferente al actual.', false);
+        return;
+      }
+
+      // Mostrar el resultado (por ahora solo simulación)
+      showUpdateResult(resultDiv, `Monto actualizado: ${currentAmount} → ${newAmount.toFixed(2)}`, true);
+      
+      // Ocultar el formulario después de 2 segundos
+      setTimeout(() => {
+        formDiv.remove();
+      }, 2000);
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      formDiv.remove();
+    });
+
+    return formDiv;
+  };
+
+  // Función para mostrar resultados de actualización
+  const showUpdateResult = (resultElement, message, isSuccess) => {
+    resultElement.textContent = message;
+    resultElement.style.display = 'block';
+    
+    if (isSuccess) {
+      resultElement.className = 'update-result success';
+    } else {
+      resultElement.className = 'update-result error';
+    }
+  };
+
   const fetchAndDisplaySubscriptions = async () => {
       tableBody.innerHTML = '';
       messageArea.textContent = 'Buscando datos en la API de Mercado Pago...';
@@ -62,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
       resultado.results.forEach(sub => {
           const row = tableBody.insertRow();
           row.insertCell().textContent = sub.reason || 'N/A';
-          row.insertCell().textContent = sub.payer_email || 'No disponible';
+          row.insertCell().textContent = sub.payer_first_name || 'No disponible';
+          row.insertCell().textContent = sub.payer_last_name || 'No disponible';
           const subAmount = sub.auto_recurring?.transaction_amount || 0;
           const currency = sub.auto_recurring?.currency_id || '';
           row.insertCell().textContent = `${subAmount.toFixed(2)} ${currency}`;
@@ -71,6 +145,28 @@ document.addEventListener('DOMContentLoaded', () => {
           statusCell.className = `status status-${sub.status}`;
           const nextPaymentDate = sub.next_payment_date ? new Date(sub.next_payment_date).toLocaleDateString() : 'Finalizado';
           row.insertCell().textContent = nextPaymentDate;
+          
+          // Columna de acciones
+          const actionsCell = row.insertCell();
+          const updateButton = document.createElement('button');
+          updateButton.textContent = 'Actualizar';
+          updateButton.className = 'button-update';
+          updateButton.addEventListener('click', () => {
+            console.log('Botón actualizar clickeado para:', sub.id); // Debug
+            
+            // Ocultar cualquier formulario existente
+            const existingForms = document.querySelectorAll('.update-form');
+            existingForms.forEach(form => form.remove());
+            
+            // Crear y mostrar el nuevo formulario
+            const updateForm = createUpdateForm(sub.id, sub.reason || 'N/A', subAmount);
+            
+            // Insertar después de la fila actual
+            row.parentNode.insertBefore(updateForm, row.nextSibling);
+            
+            console.log('Formulario insertado:', updateForm); // Debug
+          });
+          actionsCell.appendChild(updateButton);
       });
   };
 
