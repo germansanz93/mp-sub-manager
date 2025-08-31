@@ -8,10 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnBuscar = document.getElementById('btn-buscar');
   const btnDeleteToken = document.getElementById('btn-delete-token');
   const tableBody = document.getElementById('table-body');
-  const tableContainer = document.getElementById('table-container'); // Elemento al que haremos scroll
+  const tableContainer = document.getElementById('table-container');
   const messageArea = document.getElementById('message-area');
   const statusFilter = document.getElementById('status-filter');
   const emailSearchInput = document.getElementById('email-search-input');
+  const amountSearchInput = document.getElementById('amount-search-input');
 
   const paginationControls = document.querySelectorAll('.pagination-controls');
   const prevButtons = document.querySelectorAll('.btn-prev');
@@ -31,8 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const offset = (currentPage - 1) * limit;
       const status = statusFilter.value;
       const email = emailSearchInput.value.trim();
+      const amount = amountSearchInput.value.trim();
 
-      const resultado = await window.electronAPI.buscarSuscripciones({ status, limit, offset, email });
+      const resultado = await window.electronAPI.buscarSuscripciones({ status, limit, offset, email, amount });
 
       messageArea.classList.add('hidden');
 
@@ -61,9 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const row = tableBody.insertRow();
           row.insertCell().textContent = sub.reason || 'N/A';
           row.insertCell().textContent = sub.payer_email || 'No disponible';
-          const amount = sub.auto_recurring?.transaction_amount || 0;
+          const subAmount = sub.auto_recurring?.transaction_amount || 0;
           const currency = sub.auto_recurring?.currency_id || '';
-          row.insertCell().textContent = `${amount.toFixed(2)} ${currency}`;
+          row.insertCell().textContent = `${subAmount.toFixed(2)} ${currency}`;
           const statusCell = row.insertCell();
           statusCell.textContent = sub.status;
           statusCell.className = `status status-${sub.status}`;
@@ -117,33 +119,31 @@ document.addEventListener('DOMContentLoaded', () => {
       mostrarVistaPrincipal(false);
   });
 
-  btnBuscar.addEventListener('click', () => {
+  const triggerSearch = () => {
       currentPage = 1;
       fetchAndDisplaySubscriptions();
-  });
+  };
 
-  emailSearchInput.addEventListener('keyup', (event) => {
-      if (event.key === 'Enter') {
-          btnBuscar.click();
-      }
-  });
+  btnBuscar.addEventListener('click', triggerSearch);
+  emailSearchInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') triggerSearch(); });
+  amountSearchInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') triggerSearch(); });
 
   prevButtons.forEach(btn => {
-      btn.addEventListener('click', async () => { // <--- Cambio a async
+      btn.addEventListener('click', async () => {
           if (currentPage > 1) {
               currentPage--;
-              await fetchAndDisplaySubscriptions(); // <--- Se espera a que termine
-              tableContainer.scrollIntoView({ behavior: 'smooth' }); // <--- ¡AQUÍ ESTÁ LA MAGIA!
+              await fetchAndDisplaySubscriptions();
+              tableContainer.scrollIntoView({ behavior: 'smooth' });
           }
       });
   });
 
   nextButtons.forEach(btn => {
-      btn.addEventListener('click', async () => { // <--- Cambio a async
+      btn.addEventListener('click', async () => {
           if (currentPage < totalPages) {
               currentPage++;
-              await fetchAndDisplaySubscriptions(); // <--- Se espera a que termine
-              tableContainer.scrollIntoView({ behavior: 'smooth' }); // <--- ¡AQUÍ ESTÁ LA MAGIA!
+              await fetchAndDisplaySubscriptions();
+              tableContainer.scrollIntoView({ behavior: 'smooth' });
           }
       });
   });

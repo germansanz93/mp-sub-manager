@@ -58,6 +58,10 @@ ipcMain.handle('buscar-suscripciones', async (event, params) => {
             apiParams.payer_email = params.email;
         }
 
+        if (params.amount) {
+            apiParams.transaction_amount = params.amount;
+        }
+
         const response = await axios.get('https://api.mercadopago.com/preapproval/search', {
             headers: { 'Authorization': `Bearer ${token}` },
             params: apiParams
