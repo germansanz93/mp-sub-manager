@@ -46,6 +46,10 @@
       "package.json"
     ],
     "extraResources": [],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/keytar/**/*"
+    ],
     "win": {
       "target": [
         {
