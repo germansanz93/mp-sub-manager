@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Frontend para API de Mercado Pago</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; text-align: center; background-color: #f0f2f5; color: #333;}
+        h1 { color: #009ee3; }
+        .container { max-width: 800px; margin: 40px auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        button { background-color: #009ee3; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; margin: 5px; transition: background-color 0.3s ease; }
+        button:hover { background-color: #008ad1; }
+        button:disabled { background-color: #c0c0c0; cursor: not-allowed; }
+        input[type="password"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .button-secondary { background-color: #7f8c8d; }
+        .button-secondary:hover { background-color: #95a5a6; }
+        .hidden { display: none; }
+        .error { color: #ff4d4d; }
+        #table-container { width: 100%; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #e0e0e0; padding: 12px 15px; text-align: left; }
+        thead th { background-color: #009ee3; color: white; font-weight: bold; }
+        tbody tr:nth-child(even) { background-color: #f8f9fa; }
+        tbody tr:hover { background-color: #e9ecef; }
+        .status { font-weight: bold; text-transform: capitalize; }
+        .status-authorized { color: #28a745; }
+        .status-paused { color: #ffc107; }
+        .status-pending { color: #fd7e14; }
+        .status-cancelled { color: #dc3545; }
+        .message { margin-top: 20px; text-align: center; color: #6c757d; }
+        .controls-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .pagination-container { display: flex; justify-content: center; align-items: center; margin-top: 20px; gap: 10px; }
+        #status-filter { padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="setup-view">
+            <h1>Configurar Access Token</h1>
+            <p>Por favor, ingresa tu Access Token de Mercado Pago para continuar.</p>
+            <input type="password" id="token-input" placeholder="Ej: APP_USR-1234...">
+            <button id="btn-save-token">Guardar y Continuar</button>
+            <p id="setup-error" class="error hidden"></p>
+        </div>
+
+        <div id="main-view" class="hidden">
+            <h1>Visor de Suscripciones</h1>
+            <div class="controls-container">
+                <div>
+                    <label for="status-filter">Filtrar por estado: </label>
+                    <select id="status-filter">
+                        <option value="">Todos</option>
+                        <option value="authorized">Autorizadas</option>
+                        <option value="paused">Pausadas</option>
+                        <option value="pending">Pendientes</option>
+                        <option value="cancelled">Canceladas</option>
+                    </select>
+                </div>
+                <button id="btn-delete-token" class="button-secondary">Cambiar Token</button>
+            </div>
+            <button id="btn-buscar">Buscar Suscripciones</button>
+            
+            <div id="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Razón</th>
+                            <th>Email del Pagador</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Próximo Cobro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+                <p id="message-area" class="message hidden"></p>
+                <div id="pagination-controls" class="pagination-container hidden">
+                    <button id="btn-prev">Anterior</button>
+                    <span id="page-info"></span>
+                    <button id="btn-next">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./renderer.js"></script>
+</body>
+</html>
