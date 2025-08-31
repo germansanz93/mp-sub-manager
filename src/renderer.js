@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tableBody = document.getElementById('table-body');
   const messageArea = document.getElementById('message-area');
   const statusFilter = document.getElementById('status-filter');
+  const emailSearchInput = document.getElementById('email-search-input');
 
   const paginationControls = document.getElementById('pagination-controls');
   const btnPrev = document.getElementById('btn-prev');
@@ -28,8 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const offset = (currentPage - 1) * limit;
       const status = statusFilter.value;
+      const email = emailSearchInput.value.trim();
 
-      const resultado = await window.electronAPI.buscarSuscripciones({ status, limit, offset });
+      const resultado = await window.electronAPI.buscarSuscripciones({ status, limit, offset, email });
 
       messageArea.classList.add('hidden');
 
@@ -56,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
       resultado.results.forEach(sub => {
           const row = tableBody.insertRow();
           row.insertCell().textContent = sub.reason || 'N/A';
-          row.insertCell().textContent = sub.payer_email || 'No disponible';
+          row.insertCell().textContent = sub.payer_first_name || 'No disponible';
+          row.insertCell().textContent = sub.payer_last_name || 'No disponible';
           const amount = sub.auto_recurring?.transaction_amount || 0;
           const currency = sub.auto_recurring?.currency_id || '';
           row.insertCell().textContent = `${amount.toFixed(2)} ${currency}`;
@@ -118,14 +121,18 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchAndDisplaySubscriptions();
   });
 
+  emailSearchInput.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter') {
+          btnBuscar.click();
+      }
+  });
+
   btnPrev.addEventListener('click', () => {
       if (currentPage > 1) {
           currentPage--;
           fetchAndDisplaySubscriptions();
       }
   });
-
-
 
   btnNext.addEventListener('click', () => {
       if (currentPage < totalPages) {

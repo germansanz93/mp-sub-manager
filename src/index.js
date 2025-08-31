@@ -1,4 +1,3 @@
-// En tu archivo index.js (COMPLETO)
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const axios = require('axios');
@@ -6,12 +5,11 @@ const keytar = require('keytar');
 
 const KEYTAR_SERVICE = 'MiAppElectron';
 const KEYTAR_ACCOUNT = 'MercadoPagoUser';
-const RESULTS_PER_PAGE = 20; // Definimos cuántos resultados queremos por página
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 700,
+        width: 900,
+        height: 750,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
@@ -22,30 +20,26 @@ function createWindow() {
 }
 
 app.whenReady().then(createWindow);
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
-});
-
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-});
+app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 
 ipcMain.handle('guardar-token', async (event, token) => {
     try {
         await keytar.setPassword(KEYTAR_SERVICE, KEYTAR_ACCOUNT, token);
         return { success: true };
-    } catch (error) {
-        return { success: false };
-    }
+    } catch (error) { return { success: false }; }
 });
 
 ipcMain.handle('obtener-token', async () => {
-    return await keytar.getPassword(KEYTAR_SERVICE, KEYTAR_ACCOUNT);
+    try {
+        return await keytar.getPassword(KEYTAR_SERVICE, KEYTAR_ACCOUNT);
+    } catch (error) { return null; }
 });
 
 ipcMain.handle('borrar-token', async () => {
-    return await keytar.deletePassword(KEYTAR_SERVICE, KEYTAR_ACCOUNT);
+    try {
+        return await keytar.deletePassword(KEYTAR_SERVICE, KEYTAR_ACCOUNT);
+    } catch (error) { return false; }
 });
 
 ipcMain.handle('buscar-suscripciones', async (event, params) => {
@@ -53,14 +47,15 @@ ipcMain.handle('buscar-suscripciones', async (event, params) => {
     if (!token) {
         return { error: true, message: 'Error: El token de acceso no ha sido configurado.' };
     }
-
     try {
         const apiParams = {
-            limit: RESULTS_PER_PAGE,
-            offset: params.offset || 0,
+            status: params.status,
+            limit: params.limit,
+            offset: params.offset,
         };
-        if (params.status) {
-            apiParams.status = params.status;
+
+        if (params.email) {
+            apiParams.payer_email = params.email;
         }
 
         const response = await axios.get('https://api.mercadopago.com/preapproval/search', {

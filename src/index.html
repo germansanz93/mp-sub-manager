@@ -6,16 +6,21 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; text-align: center; background-color: #f0f2f5; color: #333;}
         h1 { color: #009ee3; }
-        .container { max-width: 800px; margin: 40px auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        button { background-color: #009ee3; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; margin: 5px; transition: background-color 0.3s ease; }
+        .container { max-width: 850px; margin: 40px auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        button { background-color: #009ee3; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 5px; transition: background-color 0.3s ease; }
         button:hover { background-color: #008ad1; }
-        button:disabled { background-color: #c0c0c0; cursor: not-allowed; }
-        input[type="password"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        input[type="password"], input[type="text"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
         .button-secondary { background-color: #7f8c8d; }
         .button-secondary:hover { background-color: #95a5a6; }
         .hidden { display: none; }
         .error { color: #ff4d4d; }
-        #table-container { width: 100%; }
+        .filters-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 20px; }
+        .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .filter-group label { font-weight: bold; }
+        .filter-group select, .filter-group input { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px; }
+        .pagination-controls { display: flex; align-items: center; gap: 10px; }
+        #page-info { font-size: 14px; color: #555; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         th, td { border: 1px solid #e0e0e0; padding: 12px 15px; text-align: left; }
         thead th { background-color: #009ee3; color: white; font-weight: bold; }
@@ -27,9 +32,6 @@
         .status-pending { color: #fd7e14; }
         .status-cancelled { color: #dc3545; }
         .message { margin-top: 20px; text-align: center; color: #6c757d; }
-        .controls-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .pagination-container { display: flex; justify-content: center; align-items: center; margin-top: 20px; gap: 10px; }
-        #status-filter { padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
@@ -43,28 +45,33 @@
         </div>
 
         <div id="main-view" class="hidden">
-            <h1>Visor de Suscripciones</h1>
-            <div class="controls-container">
-                <div>
-                    <label for="status-filter">Filtrar por estado: </label>
+            <h1>Visor de Suscripciones (Mercado Pago)</h1>
+            <div class="filters-container">
+                <div class="filter-group">
+                    <input type="text" id="email-search-input" placeholder="Buscar por email...">
                     <select id="status-filter">
-                        <option value="">Todos</option>
+                        <option value="">Todos los estados</option>
                         <option value="authorized">Autorizadas</option>
                         <option value="paused">Pausadas</option>
                         <option value="pending">Pendientes</option>
                         <option value="cancelled">Canceladas</option>
                     </select>
+                    <button id="btn-buscar">Buscar</button>
                 </div>
-                <button id="btn-delete-token" class="button-secondary">Cambiar Token</button>
+                <div id="pagination-controls" class="pagination-controls">
+                    <button id="btn-prev">Anterior</button>
+                    <span id="page-info">Página 1 de 1</span>
+                    <button id="btn-next">Siguiente</button>
+                </div>
             </div>
-            <button id="btn-buscar">Buscar Suscripciones</button>
-            
+            <button id="btn-delete-token" class="button-secondary">Cambiar Token</button>
             <div id="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Razón</th>
-                            <th>Email del Pagador</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
                             <th>Monto</th>
                             <th>Estado</th>
                             <th>Próximo Cobro</th>
@@ -74,11 +81,6 @@
                     </tbody>
                 </table>
                 <p id="message-area" class="message hidden"></p>
-                <div id="pagination-controls" class="pagination-container hidden">
-                    <button id="btn-prev">Anterior</button>
-                    <span id="page-info"></span>
-                    <button id="btn-next">Siguiente</button>
-                </div>
             </div>
         </div>
     </div>
