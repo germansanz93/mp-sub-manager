@@ -11,6 +11,10 @@ on:
         required: true
         default: '1.0.0'
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -127,7 +131,7 @@ jobs:
           path: dist/
           
       - name: 🏷️ Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
@@ -169,8 +173,6 @@ jobs:
           prerelease: false
           files: dist/**/*
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-manual:
     runs-on: ubuntu-latest
