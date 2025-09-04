@@ -9,7 +9,7 @@ on:
       version:
         description: 'Versión a construir (ej: 1.0.0)'
         required: true
-        default: '1.0.0'
+        default: '0.0.1'
 
 permissions:
   contents: write
