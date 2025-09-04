@@ -136,6 +136,17 @@ jobs:
         with:
           path: dist/
           
+      - name: 📝 Update README with new version
+        run: |
+          VERSION=${{ github.ref_name }} node scripts/update-readme.js
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git diff --staged --quiet || git commit -m "📝 Update README download links for ${{ github.ref_name }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 🏷️ Create Release
         uses: softprops/action-gh-release@v2
         with:

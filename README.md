@@ -16,17 +16,17 @@ Una aplicación de escritorio para gestionar suscripciones de Mercado Pago de ma
 ## 🚀 Descargas
 
 ### Windows
-- **Instalador**: [Meli Sub Manager Setup.exe](https://github.com/tu-usuario/meli-sub-manager/releases/latest/download/Meli.Sub.Manager.Setup.exe)
-- **Portable**: [Meli Sub Manager.exe](https://github.com/tu-usuario/meli-sub-manager/releases/latest/download/Meli.Sub.Manager.exe)
+- **Instalador**: [Meli Sub Manager Setup.exe](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager%20Setup%201.0.0.exe)
+- **Portable**: [Meli Sub Manager.exe](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager%201.0.0.exe)
 
 ### macOS
-- **DMG**: [Meli Sub Manager.dmg](https://github.com/tu-usuario/meli-sub-manager/releases/latest/download/Meli.Sub.Manager.dmg)
-- **ZIP**: [Meli Sub Manager-mac.zip](https://github.com/tu-usuario/meli-sub-manager/releases/latest/download/Meli.Sub.Manager-mac.zip)
+- **DMG x64**: [Meli Sub Manager-1.0.0.dmg](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0.dmg)
+- **DMG ARM64**: [Meli Sub Manager-1.0.0-arm64.dmg](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0-arm64.dmg)
 
 ### Linux
-- **AppImage**: [Meli Sub Manager.AppImage](https://github.com/tu-usuario/meli-sub-manager/releases/latest/download/Meli.Sub.Manager.AppImage)
-- **DEB**: [Meli Sub Manager.deb](https://github.com/tu-usuario/meli-sub-manager/releases/latest/download/Meli.Sub.Manager.deb)
-- **RPM**: [Meli Sub Manager.rpm](https://github.com/tu-usuario/meli-sub-manager/releases/latest/download/Meli.Sub.Manager.rpm)
+- **AppImage**: [Meli Sub Manager-1.0.0.AppImage](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0.AppImage)
+- **DEB**: [meli-sub-manager_1.0.0_amd64.deb](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/meli-sub-manager_1.0.0_amd64.deb)
+- **RPM**: [meli-sub-manager-1.0.0.x86_64.rpm](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/meli-sub-manager-1.0.0.x86_64.rpm)
 
 ## 🛠️ Instalación
 

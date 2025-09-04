@@ -11,6 +11,7 @@
     "build:mac": "electron-builder --mac",
     "build:linux": "electron-builder --linux",
     "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
+    "update-readme": "node scripts/update-readme.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -66,8 +67,7 @@
             "ia32"
           ]
         }
-      ],
-      "icon": "build/icon.ico"
+      ]
     },
     "mac": {
       "target": [
@@ -86,7 +86,6 @@
           ]
         }
       ],
-      "icon": "build/icon.icns",
       "category": "public.app-category.business"
     },
     "linux": {
@@ -110,7 +109,6 @@
           ]
         }
       ],
-      "icon": "build/icon.png",
       "category": "Office"
     },
     "nsis": {
@@ -120,8 +118,7 @@
       "createStartMenuShortcut": true
     },
     "dmg": {
-      "title": "Meli Sub Manager",
-      "icon": "build/icon.icns"
+      "title": "Meli Sub Manager"
     }
   }
 }
