@@ -1,6 +1,6 @@
 {
   "name": "meli-sub-manager",
-  "version": "0.0.5",
+  "version": "0.0.4",
   "description": "Gestor de Suscripciones de Mercado Pago con interfaz gráfica",
   "main": "src/index.js",
   "homepage": "https://github.com/germansanz93/meli-sub-manager",
