@@ -135,12 +135,25 @@ jobs:
           
       - name: 📝 Update README with new version
         run: |
+          # Asegurar que estamos en la rama main
+          git checkout main
+          git pull origin main
+          
+          # Actualizar README
           VERSION=${{ github.ref_name }} node scripts/update-readme.js
+          
+          # Configurar git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Commit y push si hay cambios
           git add README.md
-          git diff --staged --quiet || git commit -m "📝 Update README download links for ${{ github.ref_name }}"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "📝 Update README download links for ${{ github.ref_name }}"
+            git push origin main
+          else
+            echo "No changes to commit"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

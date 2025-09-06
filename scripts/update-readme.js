@@ -45,6 +45,12 @@ function updateReadme() {
     `[Meli Sub Manager.exe](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.windows.portable_x64)})`
   );
 
+  // También actualizar enlaces con versión específica
+  readmeContent = readmeContent.replace(
+    new RegExp(`\\[Meli Sub Manager\\.exe\\]\\([^)]*Meli%20Sub%20Manager%20${VERSION.replace(/\./g, '\\.')}\\.exe[^)]*\\)`, 'g'),
+    `[Meli Sub Manager.exe](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.windows.portable_x64)})`
+  );
+
   // Actualizar enlaces de macOS
   readmeContent = readmeContent.replace(
     /\[Meli Sub Manager-1\.0\.0-mac\.zip\]\([^)]+\)/g,
@@ -53,6 +59,17 @@ function updateReadme() {
 
   readmeContent = readmeContent.replace(
     /\[Meli Sub Manager-1\.0\.0-arm64-mac\.zip\]\([^)]+\)/g,
+    `[Meli Sub Manager-${VERSION}-arm64-mac.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_arm64)})`
+  );
+
+  // También actualizar enlaces con versión específica de macOS
+  readmeContent = readmeContent.replace(
+    new RegExp(`\\[Meli Sub Manager-${VERSION.replace(/\./g, '\\.')}-mac\\.zip\\]\\([^)]+\\)`, 'g'),
+    `[Meli Sub Manager-${VERSION}-mac.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_x64)})`
+  );
+
+  readmeContent = readmeContent.replace(
+    new RegExp(`\\[Meli Sub Manager-${VERSION.replace(/\./g, '\\.')}-arm64-mac\\.zip\\]\\([^)]+\\)`, 'g'),
     `[Meli Sub Manager-${VERSION}-arm64-mac.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_arm64)})`
   );
 
@@ -69,6 +86,22 @@ function updateReadme() {
 
   readmeContent = readmeContent.replace(
     /\[meli-sub-manager-1\.0\.0\.x86_64\.rpm\]\([^)]+\)/g,
+    `[meli-sub-manager-${VERSION}.x86_64.rpm](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.linux.rpm)})`
+  );
+
+  // También actualizar enlaces con versión específica de Linux
+  readmeContent = readmeContent.replace(
+    new RegExp(`\\[Meli Sub Manager-${VERSION.replace(/\./g, '\\.')}\\.AppImage\\]\\([^)]+\\)`, 'g'),
+    `[Meli Sub Manager-${VERSION}.AppImage](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.linux.appimage)})`
+  );
+
+  readmeContent = readmeContent.replace(
+    new RegExp(`\\[meli-sub-manager_${VERSION.replace(/\./g, '\\.')}_amd64\\.deb\\]\\([^)]+\\)`, 'g'),
+    `[meli-sub-manager_${VERSION}_amd64.deb](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.linux.deb)})`
+  );
+
+  readmeContent = readmeContent.replace(
+    new RegExp(`\\[meli-sub-manager-${VERSION.replace(/\./g, '\\.')}\\.x86_64\\.rpm\\]\\([^)]+\\)`, 'g'),
     `[meli-sub-manager-${VERSION}.x86_64.rpm](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.linux.rpm)})`
   );
 
