@@ -9,7 +9,7 @@ on:
       version:
         description: 'Versión a construir (ej: 1.0.0)'
         required: true
-        default: 'v0.0.2'
+        default: 'v0.0.3'
 
 permissions:
   contents: write
@@ -88,8 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.arch }}
-          path: |
-            dist/*.exe
+          path: dist/
           retention-days: 30
 
   build-macos:
@@ -123,8 +122,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-${{ matrix.arch }}
-          path: |
-            dist/*.zip
+          path: dist/
           retention-days: 30
 
   create-release:
@@ -163,12 +161,12 @@ jobs:
             ## 📥 Descargas
             
             ### Windows
-            - **Portable x64**: `Meli Sub Manager ${{ github.ref_name }}.exe`
-            - **Portable x86**: `Meli Sub Manager ${{ github.ref_name }}.exe` (32-bit)
+            - **Instalador x64**: `Meli Sub Manager Setup ${{ github.ref_name }}.exe`
+            - **Portable x64**: `Meli Sub Manager.exe`
             
             ### macOS
-            - **Portable x64**: `Meli Sub Manager-${{ github.ref_name }}.zip`
-            - **Portable ARM64**: `Meli Sub Manager-${{ github.ref_name }}-arm64.zip`
+            - **DMG x64**: `Meli Sub Manager-${{ github.ref_name }}.dmg`
+            - **DMG ARM64**: `Meli Sub Manager-${{ github.ref_name }}-arm64.dmg`
             
             ### Linux
             - **AppImage**: `Meli Sub Manager-${{ github.ref_name }}.AppImage`
@@ -193,12 +191,7 @@ jobs:
             ⭐ **Si te gusta este proyecto, ¡dale una estrella en GitHub!**
           draft: false
           prerelease: false
-          files: |
-            dist/*.exe
-            dist/*.AppImage
-            dist/*.deb
-            dist/*.rpm
-            dist/*.zip
+          files: dist/**/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
