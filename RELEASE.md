@@ -1,154 +1,90 @@
-# 🚀 Guía de Release - Meli Sub Manager
+# 🚀 Guía de Release
 
-Esta guía explica cómo crear releases oficiales de la aplicación.
+Esta guía explica cómo crear releases de manera consistente y automatizada.
 
-## 📋 Prerrequisitos
+## 📋 Comandos Disponibles
 
-- ✅ Código probado y funcionando
-- ✅ Tests pasando (si los hay)
-- ✅ Documentación actualizada
-- ✅ Cambios documentados en CHANGELOG.md
-
-## 🏷️ Proceso de Release
-
-### 1. Preparar el código
-
+### 1. Actualizar Versión (Solo archivos)
 ```bash
-# Asegurarse de estar en la rama main
-git checkout main
-git pull origin main
-
-# Verificar que no hay cambios pendientes
-git status
+npm run update-version 0.0.4
 ```
+- Actualiza la versión en `package.json`, `README.md` y `scripts/update-readme.js`
+- **NO** hace commit ni push
+- Útil para revisar cambios antes del release
 
-### 2. Actualizar versión
-
+### 2. Release Completo
 ```bash
-# Editar package.json y cambiar la versión
-# Ejemplo: de "1.0.0" a "1.1.0"
-
-# También actualizar README.md si es necesario
+npm run release 0.0.4
 ```
+- Actualiza la versión en todos los archivos
+- Hace commit de los cambios
+- Crea el tag `v0.0.4`
+- Hace push de commits y tags
+- **Inicia automáticamente GitHub Actions**
 
-### 3. Commit y push de la versión
+## 🔄 Flujo de Trabajo Recomendado
 
+### Para un Release Normal:
 ```bash
-git add .
-git commit -m "🚀 Release v1.1.0"
-git push origin main
+# 1. Actualizar versión y revisar cambios
+npm run update-version 0.0.4
+
+# 2. Revisar los cambios
+git diff
+
+# 3. Si todo está bien, hacer el release
+npm run release 0.0.4
 ```
 
-### 4. Crear tag
-
+### Para un Release Rápido:
 ```bash
-# Crear tag anotado
-git tag -a v1.1.0 -m "Release v1.1.0"
-
-# Push del tag
-git push origin v1.1.0
+# Hacer todo de una vez
+npm run release 0.0.4
 ```
 
-### 5. GitHub Actions se ejecuta automáticamente
+## 📁 Archivos que se Actualizan
 
-Una vez que se hace push del tag, GitHub Actions:
-1. 🏗️ Construye para todas las plataformas
-2. 📦 Sube los artifacts
-3. 🏷️ Crea el release automáticamente
+- `package.json` - Campo `version`
+- `README.md` - Todas las referencias a `1.0.0`
+- `scripts/update-readme.js` - Versión por defecto
 
-## 🔄 Release Manual (si es necesario)
+## 🏷️ Tags y Commits
 
-Si necesitas crear un release manualmente:
+- **Tag**: `v0.0.4` (con mensaje "Release v0.0.4")
+- **Commit**: "📝 Update version to 0.0.4"
+- **Push**: Commits y tags se suben a `origin/main`
 
-1. Ve a tu repositorio en GitHub
-2. Haz clic en "Releases"
-3. Haz clic en "Create a new release"
-4. Selecciona el tag creado
-5. Completa la información del release
-6. Sube los archivos de la carpeta `dist/`
+## ⚠️ Requisitos
 
-## 📁 Archivos a incluir en el Release
+- Debe estar en la rama `main`
+- No debe haber cambios sin commitear (excepto los que modifica el script)
+- Debe tener permisos de push al repositorio
 
-### Windows
-- `Meli Sub Manager Setup 1.1.0.exe` (Instalador)
-- `Meli Sub Manager.exe` (Portable)
+## 🔍 Verificación
 
-### macOS
-- `Meli Sub Manager-1.1.0.dmg` (DMG)
-- `Meli Sub Manager-1.1.0-mac.zip` (ZIP)
+Después del release, puedes verificar:
+- [GitHub Actions](https://github.com/germansanz93/meli-sub-manager/actions)
+- [Releases](https://github.com/germansanz93/meli-sub-manager/releases)
+- [Tags](https://github.com/germansanz93/meli-sub-manager/tags)
 
-### Linux
-- `Meli Sub Manager-1.1.0.AppImage` (AppImage)
-- `meli-sub-manager_1.1.0_amd64.deb` (DEB)
-- `meli-sub-manager-1.1.0.x86_64.rpm` (RPM)
+## 🐛 Solución de Problemas
 
-## 📝 Notas del Release
-
-### Estructura recomendada:
-
-```markdown
-🎉 **Meli Sub Manager v1.1.0**
-
-## ✨ Nuevas características
-- Funcionalidad de actualización en lote
-- Exportación a CSV
-- Interfaz mejorada
-
-## 🐛 Correcciones
-- Modal que se mostraba automáticamente
-- Problemas de paginación
-
-## 🔧 Mejoras técnicas
-- Configuración de electron-builder
-- Scripts de build automatizados
-- GitHub Actions para CI/CD
-
-## 📥 Descargas
-[Enlaces automáticos generados por GitHub Actions]
-
-## 🔄 Instrucciones de instalación
-1. Descarga el archivo para tu sistema operativo
-2. Ejecuta el instalador
-3. Configura tu Access Token de Mercado Pago
-4. ¡Listo!
-
----
-⭐ **Si te gusta este proyecto, ¡dale una estrella en GitHub!**
+### Error: "Debes especificar una versión"
+```bash
+# Usar formato semver
+npm run release 0.0.4  # ✅ Correcto
+npm run release v0.0.4 # ❌ Incorrecto
 ```
 
-## 🚨 Solución de Problemas
+### Error: "La versión debe seguir el formato semver"
+```bash
+# Usar formato X.Y.Z
+npm run release 0.0.4   # ✅ Correcto
+npm run release 0.4     # ❌ Incorrecto
+npm run release 0.0.4.1 # ❌ Incorrecto
+```
 
-### Build falla en GitHub Actions
-1. Revisa los logs del workflow
-2. Verifica que el package.json tenga el email del autor
-3. Asegúrate de que todas las dependencias estén en devDependencies
-
-### Release no se crea automáticamente
-1. Verifica que el tag esté correctamente pusheado
-2. Revisa que el workflow tenga permisos para crear releases
-3. Verifica que el GITHUB_TOKEN esté disponible
-
-### Archivos faltantes
-1. Verifica que el build se completó exitosamente
-2. Revisa que los archivos estén en la carpeta `dist/`
-3. Asegúrate de que el workflow esté subiendo los artifacts correctos
-
-## 🔮 Próximos Pasos
-
-- [ ] Configurar auto-updater
-- [ ] Firmar ejecutables
-- [ ] Notificaciones automáticas
-- [ ] Métricas de descargas
-
-## 📞 Soporte
-
-Si tienes problemas con el proceso de release:
-
-1. Revisa los logs de GitHub Actions
-2. Verifica la configuración del workflow
-3. Abre un issue en el repositorio
-4. Consulta la documentación de electron-builder
-
----
-
-**Nota**: Los releases automáticos solo funcionan cuando se hace push de un tag que comience con `v` (ej: v1.0.0, v2.1.3).
+### Error de Git
+- Verificar que estás en la rama `main`
+- Verificar que no hay cambios sin commitear
+- Verificar permisos de push

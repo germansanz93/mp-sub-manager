@@ -8,7 +8,7 @@ const path = require('path');
  * con los nombres reales de los archivos generados por electron-builder
  */
 
-const VERSION = process.env.VERSION || '1.0.0';
+const VERSION = process.env.VERSION || '0.0.5';
 const REPO_OWNER = 'germansanz93';
 const REPO_NAME = 'meli-sub-manager';
 
@@ -19,8 +19,8 @@ const FILES = {
     portable_x86: `Meli Sub Manager ${VERSION}.exe` // 32-bit version
   },
   macos: {
-    portable_x64: `Meli Sub Manager-${VERSION}.zip`,
-    portable_arm64: `Meli Sub Manager-${VERSION}-arm64.zip`
+    portable_x64: `Meli Sub Manager-${VERSION}-mac.zip`,
+    portable_arm64: `Meli Sub Manager-${VERSION}-arm64-mac.zip`
   },
   linux: {
     appimage: `Meli Sub Manager-${VERSION}.AppImage`,
@@ -47,13 +47,13 @@ function updateReadme() {
 
   // Actualizar enlaces de macOS
   readmeContent = readmeContent.replace(
-    /\[Meli Sub Manager-1\.0\.0\.zip\]\([^)]+\)/g,
-    `[Meli Sub Manager-${VERSION}.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_x64)})`
+    /\[Meli Sub Manager-1\.0\.0-mac\.zip\]\([^)]+\)/g,
+    `[Meli Sub Manager-${VERSION}-mac.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_x64)})`
   );
 
   readmeContent = readmeContent.replace(
-    /\[Meli Sub Manager-1\.0\.0-arm64\.zip\]\([^)]+\)/g,
-    `[Meli Sub Manager-${VERSION}-arm64.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_arm64)})`
+    /\[Meli Sub Manager-1\.0\.0-arm64-mac\.zip\]\([^)]+\)/g,
+    `[Meli Sub Manager-${VERSION}-arm64-mac.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_arm64)})`
   );
 
   // Actualizar enlaces de Linux

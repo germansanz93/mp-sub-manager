@@ -1,6 +1,6 @@
 {
   "name": "meli-sub-manager",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "Gestor de Suscripciones de Mercado Pago con interfaz gráfica",
   "main": "src/index.js",
   "homepage": "https://github.com/germansanz93/meli-sub-manager",
@@ -12,6 +12,8 @@
     "build:linux": "electron-builder --linux",
     "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
     "update-readme": "node scripts/update-readme.js",
+    "update-version": "node scripts/update-version.js",
+    "release": "node scripts/release.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -74,6 +76,7 @@
       ],
       "category": "public.app-category.business"
     },
+    "publish": null,
     "linux": {
       "target": [
         {

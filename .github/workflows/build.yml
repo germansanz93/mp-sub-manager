@@ -44,8 +44,6 @@ jobs:
       - name: 🏗️ Build for Linux
         run: |
           npm run build:linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: 📦 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -81,8 +79,6 @@ jobs:
       - name: 🏗️ Build for Windows
         run: |
           npm run build:win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: 📦 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -115,8 +111,6 @@ jobs:
       - name: 🏗️ Build for macOS
         run: |
           npm run build:mac
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: 📦 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -161,12 +155,12 @@ jobs:
             ## 📥 Descargas
             
             ### Windows
-            - **Instalador x64**: `Meli Sub Manager Setup ${{ github.ref_name }}.exe`
-            - **Portable x64**: `Meli Sub Manager.exe`
+            - **Portable x64**: `Meli Sub Manager ${{ github.ref_name }}.exe`
+            - **Portable x86**: `Meli Sub Manager ${{ github.ref_name }}.exe` (32-bit)
             
             ### macOS
-            - **DMG x64**: `Meli Sub Manager-${{ github.ref_name }}.dmg`
-            - **DMG ARM64**: `Meli Sub Manager-${{ github.ref_name }}-arm64.dmg`
+            - **Portable x64**: `Meli Sub Manager-${{ github.ref_name }}-mac.zip`
+            - **Portable ARM64**: `Meli Sub Manager-${{ github.ref_name }}-arm64-mac.zip`
             
             ### Linux
             - **AppImage**: `Meli Sub Manager-${{ github.ref_name }}.AppImage`
@@ -216,8 +210,6 @@ jobs:
       - name: 🏗️ Build for all platforms
         run: |
           npm run build:linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: 📦 Upload artifacts
         uses: actions/upload-artifact@v4
