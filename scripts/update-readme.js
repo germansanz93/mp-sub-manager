@@ -15,12 +15,12 @@ const REPO_NAME = 'meli-sub-manager';
 // Nombres de archivos generados por electron-builder
 const FILES = {
   windows: {
-    installer: `Meli Sub Manager Setup ${VERSION}.exe`,
-    portable: `Meli Sub Manager ${VERSION}.exe`
+    portable_x64: `Meli Sub Manager ${VERSION}.exe`,
+    portable_x86: `Meli Sub Manager ${VERSION}.exe` // 32-bit version
   },
   macos: {
-    dmg_x64: `Meli Sub Manager-${VERSION}.dmg`,
-    dmg_arm64: `Meli Sub Manager-${VERSION}-arm64.dmg`
+    portable_x64: `Meli Sub Manager-${VERSION}.zip`,
+    portable_arm64: `Meli Sub Manager-${VERSION}-arm64.zip`
   },
   linux: {
     appimage: `Meli Sub Manager-${VERSION}.AppImage`,
@@ -41,24 +41,19 @@ function updateReadme() {
 
   // Actualizar enlaces de Windows
   readmeContent = readmeContent.replace(
-    /\[Meli Sub Manager Setup\.exe\]\([^)]+\)/g,
-    `[Meli Sub Manager Setup.exe](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.windows.installer)})`
-  );
-
-  readmeContent = readmeContent.replace(
     /\[Meli Sub Manager\.exe\]\([^)]+\)/g,
-    `[Meli Sub Manager.exe](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.windows.portable)})`
+    `[Meli Sub Manager.exe](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.windows.portable_x64)})`
   );
 
   // Actualizar enlaces de macOS
   readmeContent = readmeContent.replace(
-    /\[Meli Sub Manager-1\.0\.0\.dmg\]\([^)]+\)/g,
-    `[Meli Sub Manager-${VERSION}.dmg](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.dmg_x64)})`
+    /\[Meli Sub Manager-1\.0\.0\.zip\]\([^)]+\)/g,
+    `[Meli Sub Manager-${VERSION}.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_x64)})`
   );
 
   readmeContent = readmeContent.replace(
-    /\[Meli Sub Manager-1\.0\.0-arm64\.dmg\]\([^)]+\)/g,
-    `[Meli Sub Manager-${VERSION}-arm64.dmg](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.dmg_arm64)})`
+    /\[Meli Sub Manager-1\.0\.0-arm64\.zip\]\([^)]+\)/g,
+    `[Meli Sub Manager-${VERSION}-arm64.zip](https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${encodeURIComponent(FILES.macos.portable_arm64)})`
   );
 
   // Actualizar enlaces de Linux
@@ -82,8 +77,8 @@ function updateReadme() {
   
   console.log(`✅ README.md actualizado con versión ${VERSION}`);
   console.log('📁 Archivos configurados:');
-  console.log(`   Windows: ${FILES.windows.installer}, ${FILES.windows.portable}`);
-  console.log(`   macOS: ${FILES.macos.dmg_x64}, ${FILES.macos.dmg_arm64}`);
+  console.log(`   Windows: ${FILES.windows.portable_x64} (x64), ${FILES.windows.portable_x86} (x86)`);
+  console.log(`   macOS: ${FILES.macos.portable_x64}, ${FILES.macos.portable_arm64}`);
   console.log(`   Linux: ${FILES.linux.appimage}, ${FILES.linux.deb}, ${FILES.linux.rpm}`);
 }
 

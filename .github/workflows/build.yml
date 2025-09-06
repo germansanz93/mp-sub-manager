@@ -51,7 +51,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-${{ matrix.target }}-${{ matrix.arch }}
-          path: dist/
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.rpm
           retention-days: 30
 
   build-windows:
@@ -85,7 +88,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.arch }}
-          path: dist/
+          path: |
+            dist/*.exe
           retention-days: 30
 
   build-macos:
@@ -119,7 +123,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-${{ matrix.arch }}
-          path: dist/
+          path: |
+            dist/*.zip
           retention-days: 30
 
   create-release:
@@ -158,12 +163,12 @@ jobs:
             ## 📥 Descargas
             
             ### Windows
-            - **Instalador x64**: `Meli Sub Manager Setup ${{ github.ref_name }}.exe`
-            - **Portable x64**: `Meli Sub Manager.exe`
+            - **Portable x64**: `Meli Sub Manager ${{ github.ref_name }}.exe`
+            - **Portable x86**: `Meli Sub Manager ${{ github.ref_name }}.exe` (32-bit)
             
             ### macOS
-            - **DMG x64**: `Meli Sub Manager-${{ github.ref_name }}.dmg`
-            - **DMG ARM64**: `Meli Sub Manager-${{ github.ref_name }}-arm64.dmg`
+            - **Portable x64**: `Meli Sub Manager-${{ github.ref_name }}.zip`
+            - **Portable ARM64**: `Meli Sub Manager-${{ github.ref_name }}-arm64.zip`
             
             ### Linux
             - **AppImage**: `Meli Sub Manager-${{ github.ref_name }}.AppImage`
@@ -188,7 +193,12 @@ jobs:
             ⭐ **Si te gusta este proyecto, ¡dale una estrella en GitHub!**
           draft: false
           prerelease: false
-          files: dist/**/*
+          files: |
+            dist/*.exe
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.rpm
+            dist/*.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

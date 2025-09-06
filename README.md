@@ -16,12 +16,12 @@ Una aplicación de escritorio para gestionar suscripciones de Mercado Pago de ma
 ## 🚀 Descargas
 
 ### Windows
-- **Instalador**: [Meli Sub Manager Setup.exe](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager%20Setup%201.0.0.exe)
-- **Portable**: [Meli Sub Manager.exe](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager%201.0.0.exe)
+- **Portable x64**: [Meli Sub Manager.exe](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager%201.0.0.exe)
+- **Portable x86**: [Meli Sub Manager.exe](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager%201.0.0.exe) (32-bit)
 
 ### macOS
-- **DMG x64**: [Meli Sub Manager-1.0.0.dmg](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0.dmg)
-- **DMG ARM64**: [Meli Sub Manager-1.0.0-arm64.dmg](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0-arm64.dmg)
+- **Portable x64**: [Meli Sub Manager-1.0.0.zip](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0.zip)
+- **Portable ARM64**: [Meli Sub Manager-1.0.0-arm64.zip](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0-arm64.zip)
 
 ### Linux
 - **AppImage**: [Meli Sub Manager-1.0.0.AppImage](https://github.com/germansanz93/meli-sub-manager/releases/latest/download/Meli%20Sub%20Manager-1.0.0.AppImage)
@@ -32,8 +32,8 @@ Una aplicación de escritorio para gestionar suscripciones de Mercado Pago de ma
 
 ### Opción 1: Descargar ejecutable (Recomendado)
 1. Descarga el archivo correspondiente a tu sistema operativo desde la sección [Descargas](#-descargas)
-2. Ejecuta el instalador o archivo descargado
-3. ¡Listo! La aplicación se instalará automáticamente
+2. Ejecuta el archivo descargado (no requiere instalación)
+3. ¡Listo! La aplicación es completamente portable
 
 ### Opción 2: Desde código fuente
 ```bash
